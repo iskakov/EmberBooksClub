@@ -6,6 +6,9 @@
 trigger:
 - master
 
+pr:
+- master
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -21,3 +24,7 @@ steps:
     npm install
     ember build
   displayName: 'npm install, ember install and build'
+
+- task: PublishBuildArtifact@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)'
