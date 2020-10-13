@@ -44,7 +44,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.rootURL = '/EmberBooksClub/azurePipelines//';
+    ENV.rootURL = '/EmberBooksClub/azurePipelines/';
   }
 
   return ENV;
