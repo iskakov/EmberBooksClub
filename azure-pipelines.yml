@@ -25,6 +25,6 @@ steps:
     ember build
   displayName: 'npm install, ember install and build'
 
-- task: PublishBuildArtifact@1
+- task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)'
