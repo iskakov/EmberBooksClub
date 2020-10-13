@@ -21,7 +21,7 @@ steps:
 - script: |
     npm install -g ember-cli@3.1.4
     npm install
-    ember build -prod
+    ember build -dev
   displayName: 'npm install, ember install and build'
 
 - task: PublishBuildArtifacts@1
