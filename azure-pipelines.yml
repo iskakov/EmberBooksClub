@@ -21,6 +21,8 @@ steps:
 - script: |
     npm install -g ember-cli@3.1.4
     npm install
+    ember install ember-bootstrap@3.1.4
+    ember generate ember-bootstrap --preprocessor=sass
     ember build -prod
   displayName: 'npm install, ember install and build'
 
