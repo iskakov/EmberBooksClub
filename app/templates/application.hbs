@@ -1,29 +1,18 @@
- <div class="ui fixed inverted menu">
-    <div class="ui container">
-      <a href="#" class="header item">
-        <img class="logo" src="assets/images/logo.png">
-        Project Name
+<div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+  <header class="masthead mb-auto">
+    <div class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <a href="#" class="navbar-brand">
+        Книжный клуб
       </a>
-      <a href="#" class="item">Home</a>
-      <div class="ui simple dropdown item">
-        Dropdown <i class="dropdown icon"></i>
-        <div class="menu">
-          <a class="item" href="#">Link Item</a>
-          <a class="item" href="#">Link Item</a>
-          <div class="divider"></div>
-          <div class="header">Header Item</div>
-          <div class="item">
-            <i class="dropdown icon"></i>
-            Sub Menu
-            <div class="menu">
-              <a class="item" href="#">Link Item</a>
-              <a class="item" href="#">Link Item</a>
-            </div>
-          </div>
-          <a class="item" href="#">Link Item</a>
-        </div>
-      </div>
+      <nav class="navbar-nav">
+        <a href="#" class="nav-link active">Список встреч</a>
+        <a href="#" class="nav-link">Список книг</a>
+        <a href="#" class="nav-link">Поиск</a>
+      </nav>
     </div>
-  </div>
+  </header>
 
-{{outlet}}
+  <main role="container" class="container">
+    {{outlet}}
+  </main>
+</div>
