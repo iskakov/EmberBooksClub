@@ -28,6 +28,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)'
+    Parallel: true
 
 - task: CopyFiles@2
   inputs:
