@@ -20,7 +20,6 @@ steps:
 
 - script: |
     npm install -g ember-cli@3.1.4
-    ls
     npm install
     ember build
   displayName: 'npm install, ember install and build'
