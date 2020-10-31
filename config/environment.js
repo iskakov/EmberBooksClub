@@ -4,6 +4,7 @@ module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'ember-book-club2',
     environment,
+    backendURL: 'http://localhost:3000',
     rootURL: '/',
     locationType: 'auto',
     EmberENV: {
@@ -30,6 +31,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
     ENV.rootURL = '/EmberBooksClub/azurePipelines/';
+    ENV.backendURL = 'https://jsonserver-bookclub.herokuapp.com'
   }
 
   if (environment === 'test') {

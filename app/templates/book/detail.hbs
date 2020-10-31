@@ -1,0 +1,8 @@
+Название книги
+
+{{model.title}}
+
+{{#link-to "book.edit" model.id}}
+  Изменить
+{{/link-to}}
+<button onclick={{action "deleteBook" model}}>Удалить</button>
