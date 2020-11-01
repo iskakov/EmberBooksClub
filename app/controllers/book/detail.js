@@ -6,7 +6,6 @@ export default Controller.extend({
 
   actions: {
     async deleteBook(book) {
-      alert('Book deleted!!!');
       await this.get('dataService').deleteBook(book);
       this.transitionToRoute('book.index');
     }

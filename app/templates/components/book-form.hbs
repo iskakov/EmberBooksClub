@@ -1,9 +1,36 @@
+{{#if isNew}}
+  <h3>Новая книга</h3>
+{{else}}
+  <h3>Название книги: {{book.title}}</h3>
+{{/if}}
+
 <form onsubmit={{action "submitForm"}}>
-
-  Название книги
-
-  {{title}}
-  {{input value=title}}
-  <button type="submit">save</button>
+  <div class="form-group">
+    <label>Название книги:</label>
+    {{input value=title class="form-control" placeholder="Название книги"}}
+  </div>
+  <div class="form-group">
+    <label>Автор:</label>
+    {{input value=author class="form-control" placeholder="Автор"}}
+  </div>
+  <div class="form-group">
+    <label>Кол-во страниц:</label>
+    {{input value=countPages class="form-control" placeholder="Кол-во страниц"}}
+  </div>
+  <div class="form-group">
+    <label>Ссылка на изображение:</label>
+    {{input value=imgUrl class="form-control" placeholder="Ссылка на изображение"}}
+  </div>
+  <div class="form-group">
+    <label>Ссылка на страницу покупки:</label>
+    {{input value=descUrl class="form-control" placeholder="Ссылка на страницу покупки"}}
+  </div>
+  <button class="btn btn-primary my-1 btn-block active" type="submit">
+    {{#if isNew}}
+      Добавить
+    {{else}}
+      Сохранить
+    {{/if}}
+  </button>
 </form>
 

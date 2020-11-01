@@ -6,8 +6,5 @@ export default Route.extend({
 
   model({ id }) {
     return this.get('dataService').getBook(id);
-  },
-  setupController() {
-    this._super(...arguments);
   }
 });
