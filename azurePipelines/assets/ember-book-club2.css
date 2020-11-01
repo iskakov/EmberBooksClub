@@ -9893,14 +9893,13 @@ h3 {
     border-color: #dee2e6;
   }
 }
-a,
-a:focus,
-a:hover {
-  color: white;
+.container-fluid, .container-sm, .container-md, .container-lg, .container-xl {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.container {
-  padding: 1.5rem;
+.main-row {
+  height: 662px;
 }
 
 /*# sourceMappingURL=ember-book-club2.css.map */
