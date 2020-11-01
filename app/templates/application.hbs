@@ -1,18 +1,22 @@
 <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
   <header class="masthead mb-auto">
-    <div class="navbar navbar-expand-sm bg-dark navbar-dark">
-      <a href="#" class="navbar-brand">
-        Книжный клуб
-      </a>
+    <div class="navbar navbar-expand-sm bg-dark navbar-dark text-white">
+      {{#link-to "index" class="navbar-brand"}}
+         Книжный клуб
+      {{/link-to}}
       <nav class="navbar-nav">
         <a href="#" class="nav-link active">Список встреч</a>
-        <a href="#" class="nav-link">Список книг</a>
-        <a href="#" class="nav-link">Поиск</a>
+        {{#link-to "book" class="nav-link"}}
+          Список книг
+        {{/link-to}}
+        {{#link-to "speaker" class="nav-link"}}
+          Список участников
+        {{/link-to}}
       </nav>
     </div>
   </header>
 
-  <main role="container" class="container">
+  <main role="container" class="container-fluid">
     {{outlet}}
   </main>
 </div>

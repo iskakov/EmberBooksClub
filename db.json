@@ -1,0 +1,40 @@
+{
+  "books":[
+    {
+      "id" : 1,
+      "title": "Война и Мир",
+      "countPages": "304",
+      "imgUrl": "http://google.com",
+      "descUrl": "http://google.com",
+      "author" : "Достоевский"
+    },{
+      "id" : 1,
+      "title": "Война и Мир",
+      "countPages": "304",
+      "imgUrl": "http://google.com",
+      "descUrl": "http://google.com",
+      "author" : "Достоевский"
+    },{
+      "id" : 1,
+      "title": "Война и Мир",
+      "countPages": "304",
+      "imgUrl": "http://google.com",
+      "descUrl": "http://google.com",
+      "author" : "Достоевский"
+    },{
+      "id" : 1,
+      "title": "Война и Мир",
+      "countPages": "304",
+      "imgUrl": "http://google.com",
+      "descUrl": "http://google.com",
+      "author" : "Достоевский"
+    }
+  ],
+  "speakers" : [
+    {
+      "id": 1,
+      "firstName": "Алексей",
+      "lastName": "Искаков"
+    }
+  ]
+}
