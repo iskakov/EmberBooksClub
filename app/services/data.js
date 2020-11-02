@@ -33,16 +33,14 @@ export default Service.extend({
   },
   
   async createBook(book) {
-    await fetch(`${ENV.backendURL}/books`, 
+    let res = await fetch(`${ENV.backendURL}/books`, 
     {
       method: 'POST',
       headers: { 'Content-Type' : 'application/json' },
       body: JSON.stringify(book)
     });
-    let response = await fetch(`${ENV.backendURL}/books`);
-    let books = await response.json();
-    set(book, 'id', books[books.length-1].id)
-    this.get('books').pushObject(book);
+    let data = await res.json();
+    this.get('books').pushObject(data);
     },
   
   updateBook(book) {
@@ -82,16 +80,14 @@ export default Service.extend({
   },
   
   async createSpeaker(speaker) {
-    await fetch(`${ENV.backendURL}/speakers`, 
+    let res = await fetch(`${ENV.backendURL}/speakers`, 
     {
       method: 'POST',
       headers: { 'Content-Type' : 'application/json' },
       body: JSON.stringify(speaker)
     });
-    let response = await fetch(`${ENV.backendURL}/speakers`);
-    let speakers = await response.json();
-    set(speaker, 'id', speakers[speakers.length-1].id)
-    this.get('speakers').pushObject(speaker);
+    let data = await res.json();
+    this.get('speakers').pushObject(data);
     },
   
   updateSpeaker(speaker) {
