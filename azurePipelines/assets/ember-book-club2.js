@@ -2,6 +2,36 @@
 
 
 
+define('ember-book-club2/adapters/application', ['exports', 'ember-data', 'ember-book-club2/config/environment'], function (exports, _emberData, _environment) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberData.default.JSONAPIAdapter.extend({
+    host: _environment.default.backendURL,
+
+    init() {
+      this._super(...arguments);
+      this.set('headers', {
+        'Content-Type': 'application/json'
+      });
+    },
+
+    buildURL(modelName, id, snapshot, requestType, query) {
+      let url = this._super(...arguments);
+      if (modelName === 'speaker' && requestType === 'findRecord' && id) {
+        url += '?_embed=reports';
+      }
+
+      if (modelName === 'book' && requestType === 'findRecord' && id) {
+        url += '?_embed=reports';
+      }
+
+      return url;
+    }
+  });
+});
 define('ember-book-club2/app', ['exports', 'ember-book-club2/resolver', 'ember-load-initializers', 'ember-book-club2/config/environment'], function (exports, _resolver, _emberLoadInitializers, _environment) {
   'use strict';
 
@@ -860,6 +890,57 @@ define('ember-book-club2/components/ember-popper', ['exports', 'ember-popper/com
     }
   });
 });
+define('ember-book-club2/components/ember-selectize', ['exports', 'ember-cli-selectize/components/ember-selectize'], function (exports, _emberSelectize) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberSelectize.default;
+});
+define('ember-book-club2/components/report-form', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Component.extend({
+    store: Ember.inject.service('store'),
+    actions: {
+      submitForm(e) {
+        e.preventDefault();
+
+        this.onsubmit({
+          id: this.get('id'),
+          book: this.get('book'),
+          speaker: this.get('speaker'),
+          date: this.get('date'),
+          shortReview: this.get('shortReview'),
+          raiting: this.get('raiting'),
+          presentationUrl: this.get('presentationUrl'),
+          videoUrl: this.get('videoUrl')
+        });
+      }
+    },
+    async didReceiveAttrs() {
+      this._super(...arguments);
+      let books = await this.get('store').findAll('book');
+      let speakers = await this.get('store').findAll('speaker');
+      this.setProperties({
+        book: this.get('report.book'),
+        books: books,
+        speakers: speakers,
+        speaker: this.get('report.speaker'),
+        date: this.get('report.date'),
+        shortReview: this.get('report.shortReview'),
+        raiting: this.get('report.raiting'),
+        presentationUrl: this.get('report.presentationUrl'),
+        videoUrl: this.get('report.videoUrl'),
+        id: this.get('report.id') ? this.get('report.id') : undefined
+      });
+    }
+  });
+});
 define('ember-book-club2/components/speaker-form', ['exports'], function (exports) {
   'use strict';
 
@@ -922,8 +1003,15 @@ define('ember-book-club2/controllers/book/create', ['exports'], function (export
     dataService: Ember.inject.service('data'),
     actions: {
       async saveBook(book) {
-        await this.get('dataService').createBook(book);
-        this.transitionToRoute('book.index');
+        try {
+          const newBook = this.store.createRecord('book', book);
+
+          await newBook.save();
+
+          this.transitionToRoute('book.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -956,8 +1044,82 @@ define('ember-book-club2/controllers/book/edit', ['exports'], function (exports)
 
     actions: {
       async onsubmit(book) {
-        await this.get('dataService').updateBook(book);
-        this.transitionToRoute('book.index');
+        try {
+          this.get('model').setProperties(book);
+          await this.get('model').save();
+
+          this.transitionToRoute('book.index');
+        } catch (e) {
+          this.send('error', e);
+        }
+      }
+    }
+  });
+});
+define('ember-book-club2/controllers/report', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Controller.extend({});
+});
+define('ember-book-club2/controllers/report/create', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Controller.extend({
+    actions: {
+      async saveReport(report) {
+        try {
+          const newReport = this.store.createRecord('report', report);
+
+          await newReport.save();
+
+          this.transitionToRoute('report.index');
+        } catch (e) {
+          this.send('error', e);
+        }
+      }
+    }
+  });
+});
+define('ember-book-club2/controllers/report/detail', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Controller.extend({
+    actions: {
+      async deleteReport(report) {
+        await this.get('dataService').deletereport(report);
+        this.transitionToRoute('report.index');
+      }
+    }
+  });
+});
+define('ember-book-club2/controllers/report/edit', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Controller.extend({
+    dataService: Ember.inject.service('data'),
+
+    actions: {
+      async onsubmit(report) {
+        try {
+          this.get('model').setProperties(report);
+          await this.get('model').save();
+
+          this.transitionToRoute('report.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -983,8 +1145,15 @@ define('ember-book-club2/controllers/speaker/create', ['exports'], function (exp
     dataService: Ember.inject.service('data'),
     actions: {
       async saveSpeaker(speaker) {
-        await this.get('dataService').createSpeaker(speaker);
-        this.transitionToRoute('speaker.index');
+        try {
+          const newspeaker = this.store.createRecord('speaker', speaker);
+
+          await newspeaker.save();
+
+          this.transitionToRoute('speaker.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -1017,8 +1186,14 @@ define('ember-book-club2/controllers/speaker/edit', ['exports'], function (expor
 
     actions: {
       async onsubmit(speaker) {
-        await this.get('dataService').updateSpeaker(speaker);
-        this.transitionToRoute('speaker.index');
+        try {
+          this.get('model').setProperties(speaker);
+          await this.get('model').save();
+
+          this.transitionToRoute('speaker.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -1123,6 +1298,266 @@ define('ember-book-club2/helpers/cancel-all', ['exports', 'ember-concurrency/hel
     }
   });
 });
+define('ember-book-club2/helpers/is-after', ['exports', 'ember-moment/helpers/is-after'], function (exports, _isAfter) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isAfter.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/is-before', ['exports', 'ember-moment/helpers/is-before'], function (exports, _isBefore) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isBefore.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/is-between', ['exports', 'ember-moment/helpers/is-between'], function (exports, _isBetween) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isBetween.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/is-same-or-after', ['exports', 'ember-moment/helpers/is-same-or-after'], function (exports, _isSameOrAfter) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isSameOrAfter.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/is-same-or-before', ['exports', 'ember-moment/helpers/is-same-or-before'], function (exports, _isSameOrBefore) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isSameOrBefore.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/is-same', ['exports', 'ember-moment/helpers/is-same'], function (exports, _isSame) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _isSame.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-add', ['exports', 'ember-moment/helpers/moment-add'], function (exports, _momentAdd) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentAdd.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-calendar', ['exports', 'ember-moment/helpers/moment-calendar'], function (exports, _momentCalendar) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentCalendar.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-diff', ['exports', 'ember-moment/helpers/moment-diff'], function (exports, _momentDiff) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentDiff.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-duration', ['exports', 'ember-moment/helpers/moment-duration'], function (exports, _momentDuration) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentDuration.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-format', ['exports', 'ember-moment/helpers/moment-format'], function (exports, _momentFormat) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentFormat.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-from-now', ['exports', 'ember-moment/helpers/moment-from-now'], function (exports, _momentFromNow) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentFromNow.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-from', ['exports', 'ember-moment/helpers/moment-from'], function (exports, _momentFrom) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentFrom.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-subtract', ['exports', 'ember-moment/helpers/moment-subtract'], function (exports, _momentSubtract) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentSubtract.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-to-date', ['exports', 'ember-moment/helpers/moment-to-date'], function (exports, _momentToDate) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentToDate.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-to-now', ['exports', 'ember-moment/helpers/moment-to-now'], function (exports, _momentToNow) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentToNow.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-to', ['exports', 'ember-moment/helpers/moment-to'], function (exports, _momentTo) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _momentTo.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment-unix', ['exports', 'ember-moment/helpers/unix'], function (exports, _unix) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _unix.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/moment', ['exports', 'ember-moment/helpers/moment'], function (exports, _moment) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _moment.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/now', ['exports', 'ember-moment/helpers/now'], function (exports, _now) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _now.default;
+    }
+  });
+});
 define('ember-book-club2/helpers/on-document', ['exports', 'ember-on-helper/helpers/on-document'], function (exports, _onDocument) {
   'use strict';
 
@@ -1201,6 +1636,38 @@ define('ember-book-club2/helpers/task', ['exports', 'ember-concurrency/helpers/t
     enumerable: true,
     get: function () {
       return _task.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/unix', ['exports', 'ember-moment/helpers/unix'], function (exports, _unix) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _unix.default;
+    }
+  });
+});
+define('ember-book-club2/helpers/utc', ['exports', 'ember-moment/helpers/utc'], function (exports, _utc) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(exports, 'default', {
+    enumerable: true,
+    get: function () {
+      return _utc.default;
+    }
+  });
+  Object.defineProperty(exports, 'utc', {
+    enumerable: true,
+    get: function () {
+      return _utc.utc;
     }
   });
 });
@@ -1341,6 +1808,52 @@ define("ember-book-club2/instance-initializers/ember-data", ["exports", "ember-d
     initialize: _initializeStoreService.default
   };
 });
+define('ember-book-club2/models/book', ['exports', 'ember-data'], function (exports, _emberData) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberData.default.Model.extend({
+    title: _emberData.default.attr('string'),
+    author: _emberData.default.attr('string'),
+    countPages: _emberData.default.attr('number'),
+    descUrl: _emberData.default.attr('string'),
+    imgUrl: _emberData.default.attr('string'),
+
+    reports: _emberData.default.hasMany('report')
+  });
+});
+define('ember-book-club2/models/report', ['exports', 'ember-data'], function (exports, _emberData) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberData.default.Model.extend({
+    date: _emberData.default.attr('date-string'),
+    shortReview: _emberData.default.attr('string'),
+    raiting: _emberData.default.attr('number'),
+    presentationUrl: _emberData.default.attr('string'),
+    videoUrl: _emberData.default.attr('string'),
+
+    book: _emberData.default.belongsTo('book'),
+    speaker: _emberData.default.belongsTo('speaker')
+  });
+});
+define('ember-book-club2/models/speaker', ['exports', 'ember-data'], function (exports, _emberData) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberData.default.Model.extend({
+    firstName: _emberData.default.attr('string'),
+    lastName: _emberData.default.attr('string'),
+
+    reports: _emberData.default.hasMany('report')
+  });
+});
 define('ember-book-club2/modifiers/focus-trap', ['exports', 'ember-focus-trap/modifiers/focus-trap'], function (exports, _focusTrap) {
   'use strict';
 
@@ -1402,6 +1915,11 @@ define('ember-book-club2/router', ['exports', 'ember-book-club2/config/environme
       this.route('create');
       this.route('edit', { path: '/:id/edit' });
     });
+    this.route('report', { path: '/reports' }, function () {
+      this.route('create');
+      this.route('detail', { path: '/:id' });
+      this.route('edit', { path: '/:id/edit' });
+    });
   });
 
   exports.default = Router;
@@ -1426,9 +1944,11 @@ define('ember-book-club2/routes/book', ['exports'], function (exports) {
         refreshModel: true
       }
     },
-    dataService: Ember.inject.service('data'),
     model({ search }) {
-      return this.get('dataService').getBooks(search);
+      if (search) {
+        return this.store.query('book', { q: search });
+      }
+      return this.store.findAll('book');
     },
     actions: {
       loading() {
@@ -1452,10 +1972,9 @@ define('ember-book-club2/routes/book/detail', ['exports'], function (exports) {
     value: true
   });
   exports.default = Ember.Route.extend({
-    dataService: Ember.inject.service('data'),
 
     model({ id }) {
-      return this.get('dataService').getBook(id);
+      return this.get('store').findRecord('book', id);
     }
   });
 });
@@ -1466,10 +1985,9 @@ define('ember-book-club2/routes/book/edit', ['exports'], function (exports) {
     value: true
   });
   exports.default = Ember.Route.extend({
-    dataService: Ember.inject.service('data'),
 
     model({ id }) {
-      return this.get('dataService').getBook(id);
+      return this.get('store').findRecord('book', id);
     }
   });
 });
@@ -1497,6 +2015,54 @@ define('ember-book-club2/routes/loading', ['exports'], function (exports) {
   });
   exports.default = Ember.Route.extend({});
 });
+define('ember-book-club2/routes/report', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Route.extend({
+    model({ search }) {
+      if (search) {
+        return this.store.query('report', { q: search });
+      }
+      return this.store.findAll('report');
+    }
+  });
+});
+define('ember-book-club2/routes/report/create', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Route.extend({});
+});
+define('ember-book-club2/routes/report/detail', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Route.extend({
+
+    model({ id }) {
+      return this.get('store').findRecord('report', id);
+    }
+  });
+});
+define('ember-book-club2/routes/report/edit', ['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.Route.extend({
+    model({ id }) {
+      return this.get('store').findRecord('report', id);
+    }
+  });
+});
 define('ember-book-club2/routes/speaker', ['exports'], function (exports) {
   'use strict';
 
@@ -1509,9 +2075,11 @@ define('ember-book-club2/routes/speaker', ['exports'], function (exports) {
         refreshModel: true
       }
     },
-    dataService: Ember.inject.service('data'),
     model({ search }) {
-      return this.get('dataService').getSpeakers(search);
+      if (search) {
+        return this.store.query('speaker', { q: search });
+      }
+      return this.store.findAll('speaker');
     },
     actions: {
       loading() {
@@ -1535,10 +2103,8 @@ define('ember-book-club2/routes/speaker/detail', ['exports'], function (exports)
     value: true
   });
   exports.default = Ember.Route.extend({
-    dataService: Ember.inject.service('data'),
-
     model({ id }) {
-      return this.get('dataService').getSpeaker(id);
+      return this.get('store').findRecord('speaker', id);
     }
   });
 });
@@ -1549,10 +2115,88 @@ define('ember-book-club2/routes/speaker/edit', ['exports'], function (exports) {
     value: true
   });
   exports.default = Ember.Route.extend({
-    dataService: Ember.inject.service('data'),
-
     model({ id }) {
-      return this.get('dataService').getSpeaker(id);
+      return this.get('store').findRecord('speaker', id);
+    }
+  });
+});
+define('ember-book-club2/serializers/application', ['exports', 'ember-data'], function (exports, _emberData) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _emberData.default.JSONSerializer.extend({
+
+    keyForRelationship(key, typeClass, method) {
+      if (typeClass === 'belongsTo') {
+        return `${key}Id`;
+      }
+
+      return this._super(...arguments);
+    },
+
+    serializeBelongsTo(snapshot, json, relationship) {
+      // super.serializeBelongsTo(...arguments);
+      let key = relationship.key;
+      let belongsTo = snapshot.belongsTo(key);
+
+      key = this.keyForRelationship ? this.keyForRelationship(key, "belongsTo", "serialize") : key;
+      json[key] = Ember.isNone(belongsTo) ? belongsTo : parseInt(belongsTo.record.get('id'));
+    }
+  });
+});
+define('ember-book-club2/serializers/book', ['exports', 'ember-book-club2/serializers/application'], function (exports, _application) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _application.default.extend({
+    normalize(model, hash) {
+      hash = this._super(...arguments);
+      return hash;
+    },
+    serialize(snapshot, options) {
+      let json = this._super(...arguments);
+      json.type = 'book';
+      return json;
+    }
+  });
+});
+define('ember-book-club2/serializers/report', ['exports', 'ember-book-club2/serializers/application'], function (exports, _application) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _application.default.extend({
+    normalize(model, hash) {
+      hash = this._super(...arguments);
+      return hash;
+    },
+    serialize(snapshot, options) {
+      let json = this._super(...arguments);
+      json.type = 'report';
+      return json;
+    }
+  });
+});
+define('ember-book-club2/serializers/speaker', ['exports', 'ember-book-club2/serializers/application'], function (exports, _application) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _application.default.extend({
+    normalize(model, hash) {
+      hash = this._super(...arguments);
+      return hash;
+    },
+    serialize(snapshot, options) {
+      let json = this._super(...arguments);
+      json.type = 'speaker';
+      return json;
     }
   });
 });
@@ -1675,6 +2319,20 @@ define('ember-book-club2/services/data', ['exports', 'ember-book-club2/config/en
     }
   });
 });
+define('ember-book-club2/services/moment', ['exports', 'ember-moment/services/moment', 'ember-book-club2/config/environment'], function (exports, _moment, _environment) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+
+  const { get } = Ember;
+
+  exports.default = _moment.default.extend({
+    defaultFormat: get(_environment.default, 'moment.outputFormat')
+  });
+});
 define("ember-book-club2/templates/404", ["exports"], function (exports) {
   "use strict";
 
@@ -1689,7 +2347,7 @@ define("ember-book-club2/templates/application", ["exports"], function (exports)
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "TiGrsbnx", "block": "{\"symbols\":[],\"statements\":[[6,\"div\"],[10,\"class\",\"cover-container d-flex h-100 p-3 mx-auto flex-column\"],[8],[0,\"\\n  \"],[6,\"header\"],[10,\"class\",\"masthead mb-auto\"],[8],[0,\"\\n    \"],[6,\"div\"],[10,\"class\",\"navbar navbar-expand-sm bg-dark navbar-dark text-white\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"index\"],[[\"class\"],[\"navbar-brand\"]],{\"statements\":[[0,\"         Книжный клуб\\n\"]],\"parameters\":[]},null],[0,\"      \"],[6,\"nav\"],[10,\"class\",\"navbar-nav\"],[8],[0,\"\\n        \"],[6,\"a\"],[10,\"href\",\"#\"],[10,\"class\",\"nav-link active\"],[8],[0,\"Список встреч\"],[9],[0,\"\\n\"],[4,\"link-to\",[\"book\"],[[\"class\"],[\"nav-link\"]],{\"statements\":[[0,\"          Список книг\\n\"]],\"parameters\":[]},null],[4,\"link-to\",[\"speaker\"],[[\"class\"],[\"nav-link\"]],{\"statements\":[[0,\"          Список участников\\n\"]],\"parameters\":[]},null],[0,\"      \"],[9],[0,\"\\n    \"],[9],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"main\"],[10,\"role\",\"container\"],[10,\"class\",\"container-fluid\"],[8],[0,\"\\n    \"],[1,[20,\"outlet\"],false],[0,\"\\n  \"],[9],[0,\"\\n\"],[9]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/application.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "bSG9p23q", "block": "{\"symbols\":[],\"statements\":[[6,\"div\"],[10,\"class\",\"cover-container d-flex h-100 p-3 mx-auto flex-column\"],[8],[0,\"\\n  \"],[6,\"header\"],[10,\"class\",\"masthead mb-auto\"],[8],[0,\"\\n    \"],[6,\"div\"],[10,\"class\",\"navbar navbar-expand-sm bg-dark navbar-dark text-white\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"index\"],[[\"class\"],[\"navbar-brand\"]],{\"statements\":[[0,\"         Книжный клуб\\n\"]],\"parameters\":[]},null],[0,\"      \"],[6,\"nav\"],[10,\"class\",\"navbar-nav\"],[8],[0,\"\\n        \"],[6,\"a\"],[10,\"href\",\"#\"],[10,\"class\",\"nav-link active\"],[8],[0,\"Список встреч\"],[9],[0,\"\\n\"],[4,\"link-to\",[\"book\"],[[\"class\"],[\"nav-link\"]],{\"statements\":[[0,\"          Список книг\\n\"]],\"parameters\":[]},null],[4,\"link-to\",[\"speaker\"],[[\"class\"],[\"nav-link\"]],{\"statements\":[[0,\"          Список участников\\n\"]],\"parameters\":[]},null],[4,\"link-to\",[\"report\"],[[\"class\"],[\"nav-link\"]],{\"statements\":[[0,\"          Список докладов\\n\"]],\"parameters\":[]},null],[0,\"      \"],[9],[0,\"\\n    \"],[9],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"main\"],[10,\"role\",\"container\"],[10,\"class\",\"container-fluid\"],[8],[0,\"\\n    \"],[1,[20,\"outlet\"],false],[0,\"\\n  \"],[9],[0,\"\\n\"],[9]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/application.hbs" } });
 });
 define("ember-book-club2/templates/book", ["exports"], function (exports) {
   "use strict";
@@ -1713,7 +2371,7 @@ define("ember-book-club2/templates/book/detail", ["exports"], function (exports)
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "bdZeIVGk", "block": "{\"symbols\":[],\"statements\":[[6,\"h3\"],[8],[0,\"Детальная информация:\"],[9],[0,\"\\n\"],[6,\"form\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Название книги: \"],[1,[22,[\"model\",\"title\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Автор: \"],[1,[22,[\"model\",\"author\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Количество страниц: \"],[1,[22,[\"model\",\"countPages\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"a\"],[11,\"href\",[22,[\"model\",\"descUrl\"]],null],[8],[0,\"Ссылка на полное описание\"],[9],[0,\"\\n  \"],[9],[0,\"\\n\"],[9],[0,\"\\n\\n\"],[6,\"div\"],[10,\"class\",\"row\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"book.edit\",[22,[\"model\",\"id\"]]],[[\"class\"],[\"col btn btn-primary mx-3  active\"]],{\"statements\":[[0,\"    Изменить\\n\"]],\"parameters\":[]},null],[0,\"  \"],[6,\"button\"],[10,\"class\",\"col btn btn-primary mr-3  active\"],[11,\"onclick\",[26,\"action\",[[21,0,[]],\"deleteBook\",[22,[\"model\"]]],null],null],[8],[0,\"Удалить\"],[9],[0,\"\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/book/detail.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "L17kHQZm", "block": "{\"symbols\":[\"report\"],\"statements\":[[6,\"h3\"],[8],[0,\"Детальная информация:\"],[9],[0,\"\\n\"],[6,\"form\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Название книги: \"],[1,[22,[\"model\",\"title\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Автор: \"],[1,[22,[\"model\",\"author\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Количество страниц: \"],[1,[22,[\"model\",\"countPages\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"a\"],[11,\"href\",[22,[\"model\",\"descUrl\"]],null],[8],[0,\"Ссылка на полное описание\"],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Список докладов:\"],[9],[0,\"\\n\"],[4,\"each\",[[22,[\"model\",\"reports\"]]],null,{\"statements\":[[0,\"      \"],[6,\"div\"],[8],[0,\"\\n        \"],[6,\"div\"],[8],[0,\"\\n          \"],[6,\"label\"],[8],[0,\"Дата: \"],[1,[21,1,[\"date\"]],false],[9],[0,\"\\n        \"],[9],[0,\"\\n        \"],[6,\"div\"],[8],[0,\"\\n          \"],[6,\"label\"],[8],[0,\"Оценка: \"],[1,[21,1,[\"raiting\"]],false],[9],[0,\"\\n        \"],[9],[0,\"\\n        \"],[6,\"div\"],[8],[0,\"\\n          \"],[6,\"label\"],[8],[0,\"Выступающий: \"],[1,[21,1,[\"speaker\",\"firstName\"]],false],[0,\" \"],[1,[21,1,[\"speaker\",\"lastName\"]],false],[9],[0,\"\\n        \"],[9],[0,\"\\n      \"],[9],[0,\"\\n\"]],\"parameters\":[1]},null],[0,\"  \"],[9],[0,\"\\n\"],[9],[0,\"\\n\\n\"],[6,\"div\"],[10,\"class\",\"row\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"book.edit\",[22,[\"model\",\"id\"]]],[[\"class\"],[\"col btn btn-primary mx-3  active\"]],{\"statements\":[[0,\"    Изменить\\n\"]],\"parameters\":[]},null],[0,\"  \"],[6,\"button\"],[10,\"class\",\"col btn btn-primary mr-3  active\"],[11,\"onclick\",[26,\"action\",[[21,0,[]],\"deleteBook\",[22,[\"model\"]]],null],null],[8],[0,\"Удалить\"],[9],[0,\"\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/book/detail.hbs" } });
 });
 define("ember-book-club2/templates/book/edit", ["exports"], function (exports) {
   "use strict";
@@ -1757,6 +2415,14 @@ define('ember-book-club2/templates/components/ember-popper', ['exports', 'ember-
     }
   });
 });
+define("ember-book-club2/templates/components/report-form", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "XFDj881R", "block": "{\"symbols\":[],\"statements\":[[4,\"if\",[[22,[\"isNew\"]]],null,{\"statements\":[[0,\"  \"],[6,\"h3\"],[8],[0,\"Новый доклад\"],[9],[0,\"\\n\"]],\"parameters\":[]},{\"statements\":[[0,\"  \"],[6,\"h3\"],[8],[0,\"Книга о которой идет речь - \"],[1,[22,[\"book\",\"title\"]],false],[0,\" \"],[1,[22,[\"book\",\"author\"]],false],[9],[0,\"\\n\"]],\"parameters\":[]}],[0,\"\\n\"],[6,\"form\"],[11,\"onsubmit\",[26,\"action\",[[21,0,[]],\"submitForm\"],null],null],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Дата доклада:\"],[9],[0,\"\\n    \"],[1,[26,\"input\",null,[[\"type\",\"value\",\"class\",\"placeholder\"],[\"date\",[22,[\"date\"]],\"form-control\",\"\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Краткое содержание:\"],[9],[0,\"\\n    \"],[1,[26,\"input\",null,[[\"value\",\"class\",\"placeholder\"],[[22,[\"shortReview\"]],\"form-control\",\"Очень понравилась пица\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Оценка:\"],[9],[0,\"\\n    \"],[1,[26,\"input\",null,[[\"value\",\"class\",\"placeholder\"],[[22,[\"raiting\"]],\"form-control\",\"5\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Ссылка на презентацию:\"],[9],[0,\"\\n    \"],[1,[26,\"input\",null,[[\"value\",\"class\",\"placeholder\"],[[22,[\"presentationUrl\"]],\"form-control\",\"Ссылка на презентацию\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Ссылка на видео:\"],[9],[0,\"\\n    \"],[1,[26,\"input\",null,[[\"value\",\"class\",\"placeholder\"],[[22,[\"videoUrl\"]],\"form-control\",\"Ссылка на видео\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Выберите книгу:\"],[9],[0,\"\\n    \"],[1,[26,\"ember-selectize\",null,[[\"content\",\"optionValuePath\",\"optionLabelPath\",\"selection\",\"placeholder\"],[[22,[\"books\"]],\"id\",\"title\",[22,[\"book\"]],\"Select an item\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n\\n   \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Выберите докладчика:\"],[9],[0,\"\\n    \"],[1,[26,\"ember-selectize\",null,[[\"content\",\"optionValuePath\",\"optionLabelPath\",\"selection\",\"placeholder\"],[[22,[\"speakers\"]],\"id\",\"firstName\",[22,[\"speaker\"]],\"Select an item\"]]],false],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"button\"],[10,\"class\",\"btn btn-primary my-1 btn-block active\"],[10,\"type\",\"submit\"],[8],[0,\"\\n\"],[4,\"if\",[[22,[\"isNew\"]]],null,{\"statements\":[[0,\"      Добавить\\n\"]],\"parameters\":[]},{\"statements\":[[0,\"      Сохранить\\n\"]],\"parameters\":[]}],[0,\"  \"],[9],[0,\"\\n\"],[9],[0,\"\\n\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/components/report-form.hbs" } });
+});
 define("ember-book-club2/templates/components/speaker-form", ["exports"], function (exports) {
   "use strict";
 
@@ -1789,6 +2455,38 @@ define("ember-book-club2/templates/loading", ["exports"], function (exports) {
   });
   exports.default = Ember.HTMLBars.template({ "id": "ScD0oj85", "block": "{\"symbols\":[],\"statements\":[[6,\"div\"],[10,\"class\",\"progress\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"progress-bar progress-bar-striped bg-dark\"],[8],[9],[0,\"\\n\"],[9]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/loading.hbs" } });
 });
+define("ember-book-club2/templates/report", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "uyi7EPvn", "block": "{\"symbols\":[\"report\"],\"statements\":[[6,\"div\"],[10,\"class\",\"row \"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"col-3 mr-3 h-100 p-3 my-3 border text-black\"],[8],[0,\"\\n    \"],[6,\"h4\"],[8],[0,\"Список репортов:\"],[9],[0,\"\\n      \"],[1,[26,\"input\",null,[[\"value\",\"placeholder\",\"class\"],[[22,[\"search\"]],\"Поиск\",\"form-control my-2\"]]],false],[0,\"\\n\"],[4,\"link-to\",[\"report.create\"],[[\"class\"],[\"btn btn-primary my-2 btn-block\"]],{\"statements\":[[0,\"      Добавить report\\n\"]],\"parameters\":[]},null],[0,\"    \"],[6,\"div\"],[8],[9],[0,\"\\n    \"],[6,\"ul\"],[10,\"class\",\"list-group overflow-auto main-row\"],[8],[0,\"\\n\"],[4,\"each\",[[22,[\"model\"]]],null,{\"statements\":[[4,\"link-to\",[\"report.detail\",[21,1,[\"id\"]]],[[\"class\"],[\"list-group-item my-1 border\"]],{\"statements\":[[0,\"          \"],[1,[21,1,[\"date\"]],false],[0,\"\\n\"]],\"parameters\":[]},null]],\"parameters\":[1]},null],[0,\"    \"],[9],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"div\"],[10,\"class\",\"col mh-100 p-3 my-3 border text-black\"],[8],[0,\"\\n    \"],[1,[20,\"outlet\"],false],[0,\"\\n  \"],[9],[0,\"\\n\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/report.hbs" } });
+});
+define("ember-book-club2/templates/report/create", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "ZjuAuSWE", "block": "{\"symbols\":[],\"statements\":[[1,[26,\"report-form\",null,[[\"onsubmit\",\"isNew\"],[[26,\"action\",[[21,0,[]],\"saveReport\"],null],true]]],false]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/report/create.hbs" } });
+});
+define("ember-book-club2/templates/report/detail", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "7lXxRXOn", "block": "{\"symbols\":[],\"statements\":[[6,\"h3\"],[8],[0,\"Детальная информация:\"],[9],[0,\"\\n\"],[6,\"form\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Название книги и автор: \"],[1,[22,[\"model\",\"book\",\"title\"]],false],[0,\" \"],[1,[22,[\"model\",\"book\",\"author\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Докладчик: \"],[1,[22,[\"model\",\"speaker\",\"firstName\"]],false],[0,\" \"],[1,[22,[\"model\",\"speaker\",\"lastName\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n   \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Дата доклада: \"],[1,[22,[\"model\",\"date\"]],false],[9],[0,\"\\n\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Краткое содержание: \"],[1,[22,[\"model\",\"shortReview\"]],false],[9],[0,\"\\n\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Оценка: \"],[1,[22,[\"model\",\"raiting\"]],false],[9],[0,\"\\n\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Ссылка на презентацию: \"],[1,[22,[\"model\",\"presentationUrl\"]],false],[9],[0,\"\\n\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Ссылка на видео: \"],[1,[22,[\"model\",\"videoUrl\"]],false],[9],[0,\"\\n\\n  \"],[9],[0,\"\\n\\n\"],[9],[0,\"\\n\\n\"],[6,\"div\"],[10,\"class\",\"row\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"report.edit\",[22,[\"model\",\"id\"]]],[[\"class\"],[\"col btn btn-primary mx-3  active\"]],{\"statements\":[[0,\"    Изменить\\n\"]],\"parameters\":[]},null],[0,\"  \"],[6,\"button\"],[10,\"class\",\"col btn btn-primary mr-3  active\"],[11,\"onclick\",[26,\"action\",[[21,0,[]],\"deleteReport\",[22,[\"model\"]]],null],null],[8],[0,\"Удалить\"],[9],[0,\"\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/report/detail.hbs" } });
+});
+define("ember-book-club2/templates/report/edit", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "/9L9n9oC", "block": "{\"symbols\":[],\"statements\":[[1,[26,\"report-form\",null,[[\"report\",\"books\",\"onsubmit\"],[[22,[\"model\"]],[22,[\"books\"]],[26,\"action\",[[21,0,[]],\"onsubmit\"],null]]]],false]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/report/edit.hbs" } });
+});
 define("ember-book-club2/templates/speaker", ["exports"], function (exports) {
   "use strict";
 
@@ -1811,7 +2509,7 @@ define("ember-book-club2/templates/speaker/detail", ["exports"], function (expor
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "+R6OonGY", "block": "{\"symbols\":[],\"statements\":[[6,\"h3\"],[8],[0,\"Детальная информация об участнике:\"],[9],[0,\"\\n\"],[6,\"form\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Имя: \"],[1,[22,[\"model\",\"firstName\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Фамилия: \"],[1,[22,[\"model\",\"lastName\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n\"],[9],[0,\"\\n\\n\"],[6,\"div\"],[10,\"class\",\"row\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"speaker.edit\",[22,[\"model\",\"id\"]]],[[\"class\"],[\"col btn btn-primary mx-3  active\"]],{\"statements\":[[0,\"    Изменить\\n\"]],\"parameters\":[]},null],[0,\"  \"],[6,\"button\"],[10,\"class\",\"col btn btn-primary mr-3  active\"],[11,\"onclick\",[26,\"action\",[[21,0,[]],\"deleteSpeaker\",[22,[\"model\"]]],null],null],[8],[0,\"Удалить\"],[9],[0,\"\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/speaker/detail.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "kUsbojrb", "block": "{\"symbols\":[\"report\"],\"statements\":[[6,\"h3\"],[8],[0,\"Детальная информация об участнике:\"],[9],[0,\"\\n\"],[6,\"form\"],[8],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Имя: \"],[1,[22,[\"model\",\"firstName\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n  \"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Фамилия: \"],[1,[22,[\"model\",\"lastName\"]],false],[9],[0,\"\\n  \"],[9],[0,\"\\n\"],[6,\"div\"],[10,\"class\",\"form-group\"],[8],[0,\"\\n    \"],[6,\"label\"],[8],[0,\"Список докладов:\"],[9],[0,\"\\n\"],[4,\"each\",[[22,[\"model\",\"reports\"]]],null,{\"statements\":[[0,\"      \"],[6,\"div\"],[8],[0,\"\\n        \"],[6,\"div\"],[8],[0,\"\\n          \"],[6,\"label\"],[8],[0,\"Дата: \"],[1,[21,1,[\"date\"]],false],[9],[0,\"\\n        \"],[9],[0,\"\\n        \"],[6,\"div\"],[8],[0,\"\\n          \"],[6,\"label\"],[8],[0,\"Оценка: \"],[1,[21,1,[\"raiting\"]],false],[9],[0,\"\\n        \"],[9],[0,\"\\n\\n      \"],[9],[0,\"\\n\"]],\"parameters\":[1]},null],[0,\"  \"],[9],[0,\"\\n\"],[9],[0,\"\\n\\n\"],[6,\"div\"],[10,\"class\",\"row\"],[8],[0,\"\\n\"],[4,\"link-to\",[\"speaker.edit\",[22,[\"model\",\"id\"]]],[[\"class\"],[\"col btn btn-primary mx-3  active\"]],{\"statements\":[[0,\"    Изменить\\n\"]],\"parameters\":[]},null],[0,\"  \"],[6,\"button\"],[10,\"class\",\"col btn btn-primary mr-3  active\"],[11,\"onclick\",[26,\"action\",[[21,0,[]],\"deleteSpeaker\",[22,[\"model\"]]],null],null],[8],[0,\"Удалить\"],[9],[0,\"\\n\"],[9],[0,\"\\n\"]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/speaker/detail.hbs" } });
 });
 define("ember-book-club2/templates/speaker/edit", ["exports"], function (exports) {
   "use strict";
@@ -1820,6 +2518,30 @@ define("ember-book-club2/templates/speaker/edit", ["exports"], function (exports
     value: true
   });
   exports.default = Ember.HTMLBars.template({ "id": "anb0JB4n", "block": "{\"symbols\":[],\"statements\":[[1,[26,\"speaker-form\",null,[[\"speaker\",\"onsubmit\"],[[22,[\"model\"]],[26,\"action\",[[21,0,[]],\"onsubmit\"],null]]]],false]],\"hasEval\":false}", "meta": { "moduleName": "ember-book-club2/templates/speaker/edit.hbs" } });
+});
+define('ember-book-club2/transforms/date-string', ['exports', 'ember-data/transforms/date'], function (exports, _date) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = _date.default.extend({
+    moment: Ember.inject.service(),
+    deserialize(serialized) {
+      let date = this._super(serialized);
+      if (date instanceof Date && !isNaN(date)) {
+        let formattedDate = this.get('moment').moment(date).format('YYYY-MM-DD');
+        return formattedDate;
+      }
+
+      return null;
+    },
+
+    serialize(deserialized) {
+      let deserializedDate = deserialized ? this.get('moment').moment(deserialized).toDate() : null;
+      return this._super(deserializedDate);
+    }
+  });
 });
 
 
@@ -1843,6 +2565,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+e14f8927"});
+  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+ec67b164"});
 }
 //# sourceMappingURL=ember-book-club2.map

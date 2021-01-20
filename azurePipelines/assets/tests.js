@@ -5,6 +5,11 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
 
   QUnit.module('ESLint | app');
 
+  QUnit.test('adapters/application.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'adapters/application.js should pass ESLint\n\n14:50 - \'query\' is defined but never used. (no-unused-vars)');
+  });
+
   QUnit.test('app.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'app.js should pass ESLint\n\n');
@@ -13,6 +18,11 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
   QUnit.test('components/book-form.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'components/book-form.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('components/report-form.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'components/report-form.js should pass ESLint\n\n');
   });
 
   QUnit.test('components/speaker-form.js', function (assert) {
@@ -40,6 +50,26 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
     assert.ok(true, 'controllers/book/edit.js should pass ESLint\n\n');
   });
 
+  QUnit.test('controllers/report.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/report.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('controllers/report/create.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/report/create.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('controllers/report/detail.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/report/detail.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('controllers/report/edit.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'controllers/report/edit.js should pass ESLint\n\n');
+  });
+
   QUnit.test('controllers/speaker.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'controllers/speaker.js should pass ESLint\n\n');
@@ -58,6 +88,21 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
   QUnit.test('controllers/speaker/edit.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'controllers/speaker/edit.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('models/book.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/book.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('models/report.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/report.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('models/speaker.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'models/speaker.js should pass ESLint\n\n');
   });
 
   QUnit.test('resolver.js', function (assert) {
@@ -110,6 +155,26 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
     assert.ok(true, 'routes/loading.js should pass ESLint\n\n');
   });
 
+  QUnit.test('routes/report.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/report.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/report/create.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/report/create.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/report/detail.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/report/detail.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('routes/report/edit.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'routes/report/edit.js should pass ESLint\n\n');
+  });
+
   QUnit.test('routes/speaker.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'routes/speaker.js should pass ESLint\n\n');
@@ -130,9 +195,34 @@ define('ember-book-club2/tests/app.lint-test', [], function () {
     assert.ok(true, 'routes/speaker/edit.js should pass ESLint\n\n');
   });
 
+  QUnit.test('serializers/application.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'serializers/application.js should pass ESLint\n\n6:38 - \'method\' is defined but never used. (no-unused-vars)');
+  });
+
+  QUnit.test('serializers/book.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'serializers/book.js should pass ESLint\n\n8:23 - \'options\' is defined but never used. (no-unused-vars)');
+  });
+
+  QUnit.test('serializers/report.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'serializers/report.js should pass ESLint\n\n8:23 - \'options\' is defined but never used. (no-unused-vars)');
+  });
+
+  QUnit.test('serializers/speaker.js', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'serializers/speaker.js should pass ESLint\n\n8:23 - \'options\' is defined but never used. (no-unused-vars)');
+  });
+
   QUnit.test('services/data.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'services/data.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('transforms/date-string.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'transforms/date-string.js should pass ESLint\n\n');
   });
 });
 define('ember-book-club2/tests/integration/components/book-form-test', ['qunit', 'ember-qunit', '@ember/test-helpers'], function (_qunit, _emberQunit, _testHelpers) {
@@ -157,6 +247,35 @@ define('ember-book-club2/tests/integration/components/book-form-test', ['qunit',
       await (0, _testHelpers.render)(Ember.HTMLBars.template({
         "id": "044e3rT8",
         "block": "{\"symbols\":[],\"statements\":[[0,\"\\n\"],[4,\"book-form\",null,null,{\"statements\":[[0,\"        template block text\\n\"]],\"parameters\":[]},null],[0,\"    \"]],\"hasEval\":false}",
+        "meta": {}
+      }));
+
+      assert.equal(this.element.textContent.trim(), 'template block text');
+    });
+  });
+});
+define('ember-book-club2/tests/integration/components/report-form-test', ['qunit', 'ember-qunit', '@ember/test-helpers'], function (_qunit, _emberQunit, _testHelpers) {
+  'use strict';
+
+  (0, _qunit.module)('Integration | Component | report-form', function (hooks) {
+    (0, _emberQunit.setupRenderingTest)(hooks);
+
+    (0, _qunit.test)('it renders', async function (assert) {
+      // Set any properties with this.set('myProperty', 'value');
+      // Handle any actions with this.set('myAction', function(val) { ... });
+
+      await (0, _testHelpers.render)(Ember.HTMLBars.template({
+        "id": "Uc7Rj+O8",
+        "block": "{\"symbols\":[],\"statements\":[[1,[20,\"report-form\"],false]],\"hasEval\":false}",
+        "meta": {}
+      }));
+
+      assert.equal(this.element.textContent.trim(), '');
+
+      // Template block usage:
+      await (0, _testHelpers.render)(Ember.HTMLBars.template({
+        "id": "d3RmrA3o",
+        "block": "{\"symbols\":[],\"statements\":[[0,\"\\n\"],[4,\"report-form\",null,null,{\"statements\":[[0,\"        template block text\\n\"]],\"parameters\":[]},null],[0,\"    \"]],\"hasEval\":false}",
         "meta": {}
       }));
 
@@ -210,6 +329,11 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
     assert.ok(true, 'integration/components/book-form-test.js should pass ESLint\n\n');
   });
 
+  QUnit.test('integration/components/report-form-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/report-form-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('integration/components/speaker-form-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'integration/components/speaker-form-test.js should pass ESLint\n\n');
@@ -218,6 +342,11 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
   QUnit.test('test-helper.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'test-helper.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/adapters/application-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/adapters/application-test.js should pass ESLint\n\n');
   });
 
   QUnit.test('unit/controllers/book-test.js', function (assert) {
@@ -240,6 +369,26 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
     assert.ok(true, 'unit/controllers/book/edit-test.js should pass ESLint\n\n');
   });
 
+  QUnit.test('unit/controllers/report-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/report-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/controllers/report/create-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/report/create-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/controllers/report/detail-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/report/detail-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/controllers/report/edit-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/controllers/report/edit-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('unit/controllers/speaker-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/controllers/speaker-test.js should pass ESLint\n\n');
@@ -258,6 +407,21 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
   QUnit.test('unit/controllers/speaker/edit-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/controllers/speaker/edit-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/models/book-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/book-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/models/report-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/report-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/models/speaker-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/models/speaker-test.js should pass ESLint\n\n');
   });
 
   QUnit.test('unit/routes/404-test.js', function (assert) {
@@ -300,6 +464,26 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
     assert.ok(true, 'unit/routes/loading-test.js should pass ESLint\n\n');
   });
 
+  QUnit.test('unit/routes/report-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/report-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/report/create-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/report/create-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/report/detail-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/report/detail-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/routes/report/edit-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/routes/report/edit-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('unit/routes/speaker-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/routes/speaker-test.js should pass ESLint\n\n');
@@ -320,9 +504,47 @@ define('ember-book-club2/tests/tests.lint-test', [], function () {
     assert.ok(true, 'unit/routes/speaker/edit-test.js should pass ESLint\n\n');
   });
 
+  QUnit.test('unit/serializers/application-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/serializers/application-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/serializers/book-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/serializers/book-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/serializers/report-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/serializers/report-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/serializers/speaker-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/serializers/speaker-test.js should pass ESLint\n\n');
+  });
+
   QUnit.test('unit/services/data-test.js', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/services/data-test.js should pass ESLint\n\n');
+  });
+
+  QUnit.test('unit/transforms/date-string-test.js', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/transforms/date-string-test.js should pass ESLint\n\n');
+  });
+});
+define('ember-book-club2/tests/unit/adapters/application-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Adapter | application', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let adapter = this.owner.lookup('adapter:application');
+      assert.ok(adapter);
+    });
   });
 });
 define('ember-book-club2/tests/unit/controllers/book-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
@@ -377,6 +599,58 @@ define('ember-book-club2/tests/unit/controllers/book/edit-test', ['qunit', 'embe
     });
   });
 });
+define('ember-book-club2/tests/unit/controllers/report-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Controller | report', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:report');
+      assert.ok(controller);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/controllers/report/create-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Controller | report/create', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:report/create');
+      assert.ok(controller);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/controllers/report/detail-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Controller | report/detail', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:report/detail');
+      assert.ok(controller);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/controllers/report/edit-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Controller | report/edit', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:report/edit');
+      assert.ok(controller);
+    });
+  });
+});
 define('ember-book-club2/tests/unit/controllers/speaker-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
   'use strict';
 
@@ -426,6 +700,48 @@ define('ember-book-club2/tests/unit/controllers/speaker/edit-test', ['qunit', 'e
     (0, _qunit.test)('it exists', function (assert) {
       let controller = this.owner.lookup('controller:speaker/edit');
       assert.ok(controller);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/models/book-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Model | book', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let model = Ember.run(() => store.createRecord('book', {}));
+      assert.ok(model);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/models/report-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Model | report', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let model = Ember.run(() => store.createRecord('report', {}));
+      assert.ok(model);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/models/speaker-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Model | speaker', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let model = Ember.run(() => store.createRecord('speaker', {}));
+      assert.ok(model);
     });
   });
 });
@@ -525,6 +841,54 @@ define('ember-book-club2/tests/unit/routes/loading-test', ['qunit', 'ember-qunit
     });
   });
 });
+define('ember-book-club2/tests/unit/routes/report-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Route | report', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let route = this.owner.lookup('route:report');
+      assert.ok(route);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/routes/report/create-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Route | report/create', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let route = this.owner.lookup('route:report/create');
+      assert.ok(route);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/routes/report/detail-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Route | report/detail', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let route = this.owner.lookup('route:report/detail');
+      assert.ok(route);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/routes/report/edit-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Route | report/edit', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let route = this.owner.lookup('route:report/edit');
+      assert.ok(route);
+    });
+  });
+});
 define('ember-book-club2/tests/unit/routes/speaker-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
   'use strict';
 
@@ -573,6 +937,102 @@ define('ember-book-club2/tests/unit/routes/speaker/edit-test', ['qunit', 'ember-
     });
   });
 });
+define('ember-book-club2/tests/unit/serializers/application-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Serializer | application', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let serializer = store.serializerFor('application');
+
+      assert.ok(serializer);
+    });
+
+    (0, _qunit.test)('it serializes records', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let record = Ember.run(() => store.createRecord('application', {}));
+
+      let serializedRecord = record.serialize();
+
+      assert.ok(serializedRecord);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/serializers/book-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Serializer | book', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let serializer = store.serializerFor('book');
+
+      assert.ok(serializer);
+    });
+
+    (0, _qunit.test)('it serializes records', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let record = Ember.run(() => store.createRecord('book', {}));
+
+      let serializedRecord = record.serialize();
+
+      assert.ok(serializedRecord);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/serializers/report-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Serializer | report', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let serializer = store.serializerFor('report');
+
+      assert.ok(serializer);
+    });
+
+    (0, _qunit.test)('it serializes records', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let record = Ember.run(() => store.createRecord('report', {}));
+
+      let serializedRecord = record.serialize();
+
+      assert.ok(serializedRecord);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/serializers/speaker-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('Unit | Serializer | speaker', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let serializer = store.serializerFor('speaker');
+
+      assert.ok(serializer);
+    });
+
+    (0, _qunit.test)('it serializes records', function (assert) {
+      let store = this.owner.lookup('service:store');
+      let record = Ember.run(() => store.createRecord('speaker', {}));
+
+      let serializedRecord = record.serialize();
+
+      assert.ok(serializedRecord);
+    });
+  });
+});
 define('ember-book-club2/tests/unit/services/data-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
   'use strict';
 
@@ -583,6 +1043,19 @@ define('ember-book-club2/tests/unit/services/data-test', ['qunit', 'ember-qunit'
     (0, _qunit.test)('it exists', function (assert) {
       let service = this.owner.lookup('service:data');
       assert.ok(service);
+    });
+  });
+});
+define('ember-book-club2/tests/unit/transforms/date-string-test', ['qunit', 'ember-qunit'], function (_qunit, _emberQunit) {
+  'use strict';
+
+  (0, _qunit.module)('transform:date-string', 'Unit | Transform | date string', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks);
+
+    // Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let transform = this.owner.lookup('transform:date-string');
+      assert.ok(transform);
     });
   });
 });
