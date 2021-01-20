@@ -1,5 +1,4 @@
 import Route from '@ember/routing/route';
-import {inject as service} from '@ember/service';
 
 export default Route.extend({
   queryParams: {
@@ -7,9 +6,11 @@ export default Route.extend({
       refreshModel: true
     }
   },
-  dataService: service('data'),
   model({ search }) {
-    return this.get('dataService').getBooks(search);
+    if (search) {
+      return this.store.query('book', {q: search});
+    }
+    return this.store.findAll('book');
   },
   actions: {
     loading() {

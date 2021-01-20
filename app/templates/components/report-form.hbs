@@ -1,0 +1,57 @@
+{{#if isNew}}
+  <h3>Новый доклад</h3>
+{{else}}
+  <h3>Книга о которой идет речь - {{book.title}} {{book.author}}</h3>
+{{/if}}
+
+<form onsubmit={{action "submitForm"}}>
+  <div class="form-group">
+    <label>Дата доклада:</label>
+    {{input type="date" value=date class="form-control" placeholder=""}}
+  </div>
+  <div class="form-group">
+    <label>Краткое содержание:</label>
+    {{input value=shortReview class="form-control" placeholder="Очень понравилась пица"}}
+  </div>
+  <div class="form-group">
+    <label>Оценка:</label>
+    {{input value=raiting class="form-control" placeholder="5"}}
+  </div>
+  <div class="form-group">
+    <label>Ссылка на презентацию:</label>
+    {{input value=presentationUrl class="form-control" placeholder="Ссылка на презентацию"}}
+  </div>
+  <div class="form-group">
+    <label>Ссылка на видео:</label>
+    {{input value=videoUrl class="form-control" placeholder="Ссылка на видео"}}
+  </div>
+
+  <div class="form-group">
+    <label>Выберите книгу:</label>
+    {{ember-selectize
+      content=books
+      optionValuePath="id"
+      optionLabelPath="title"
+      selection=book
+      placeholder="Select an item" }}
+  </div>
+
+   <div class="form-group">
+    <label>Выберите докладчика:</label>
+    {{ember-selectize
+      content=speakers
+      optionValuePath="id"
+      optionLabelPath="firstName"
+      selection=speaker
+      placeholder="Select an item" }}
+  </div>
+
+  <button class="btn btn-primary my-1 btn-block active" type="submit">
+    {{#if isNew}}
+      Добавить
+    {{else}}
+      Сохранить
+    {{/if}}
+  </button>
+</form>
+

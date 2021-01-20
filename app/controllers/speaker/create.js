@@ -5,8 +5,16 @@ export default Controller.extend({
   dataService: service('data'),
   actions: {
     async saveSpeaker(speaker) {
-      await this.get('dataService').createSpeaker(speaker);
-      this.transitionToRoute('speaker.index');
+      try {
+        const newspeaker = this.store.createRecord('speaker', speaker);
+
+        await newspeaker.save();
+
+        this.transitionToRoute('speaker.index');
+      }
+      catch(e) {
+        this.send('error', e)
+      }
     }
   }
 });

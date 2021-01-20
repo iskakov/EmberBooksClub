@@ -20,6 +20,11 @@ Router.map(function() {
     this.route('create');
     this.route('edit', { path: '/:id/edit'});
   });
+  this.route('report', { path: '/reports'},function() {
+    this.route('create');
+    this.route('detail', { path: '/:id'});
+    this.route('edit', { path: '/:id/edit'});
+  });
 });
 
 export default Router;

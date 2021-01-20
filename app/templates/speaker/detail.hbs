@@ -6,6 +6,20 @@
   <div class="form-group">
     <label>Фамилия: {{model.lastName}}</label>
   </div>
+<div class="form-group">
+    <label>Список докладов:</label>
+    {{#each model.reports as |report|}}
+      <div>
+        <div>
+          <label>Дата: {{report.date}}</label>
+        </div>
+        <div>
+          <label>Оценка: {{report.raiting}}</label>
+        </div>
+
+      </div>
+    {{/each}}
+  </div>
 </form>
 
 <div class="row">

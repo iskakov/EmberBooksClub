@@ -5,8 +5,16 @@ export default Controller.extend({
   dataService: service('data'),
   actions: {
     async saveBook(book) {
-      await this.get('dataService').createBook(book);
-      this.transitionToRoute('book.index');
+      try {
+        const newBook = this.store.createRecord('book', book);
+
+        await newBook.save();
+
+        this.transitionToRoute('book.index');
+      }
+      catch(e) {
+        this.send('error', e)
+      }
     }
   }
 });

@@ -12,6 +12,22 @@
   <div class="form-group">
     <a href={{model.descUrl}}>Ссылка на полное описание</a>
   </div>
+  <div class="form-group">
+    <label>Список докладов:</label>
+    {{#each model.reports as |report|}}
+      <div>
+        <div>
+          <label>Дата: {{report.date}}</label>
+        </div>
+        <div>
+          <label>Оценка: {{report.raiting}}</label>
+        </div>
+        <div>
+          <label>Выступающий: {{report.speaker.firstName}} {{report.speaker.lastName}}</label>
+        </div>
+      </div>
+    {{/each}}
+  </div>
 </form>
 
 <div class="row">

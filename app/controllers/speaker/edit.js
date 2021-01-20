@@ -6,8 +6,15 @@ export default Controller.extend({
 
   actions: {
     async onsubmit(speaker) {
-      await this.get('dataService').updateSpeaker(speaker);
-      this.transitionToRoute('speaker.index');
+      try {
+        this.get('model').setProperties(speaker);
+        await this.get('model').save();
+
+        this.transitionToRoute('speaker.index');
+      }
+      catch(e) {
+        this.send('error', e);
+      }
     }
   }
 });

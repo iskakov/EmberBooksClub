@@ -24,6 +24,10 @@ module.exports = function(environment) {
     }
   };
 
+  if (environment === 'dev2') {
+
+  }
+
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
@@ -47,7 +51,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    
+
   }
 
   return ENV;
