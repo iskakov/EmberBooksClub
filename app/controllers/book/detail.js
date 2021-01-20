@@ -5,9 +5,14 @@ export default Controller.extend({
   dataService: service('data'),
 
   actions: {
-    async deleteBook(book) {
-      await this.get('dataService').deleteBook(book);
-      this.transitionToRoute('book.index');
+    async deleteBook() {
+      try {
+        await this.model.destroyRecord();
+        this.transitionToRoute('book.index');
+      }
+      catch(e) {
+        this.send('error', e);
+      }
     }
   }
 });

@@ -5,9 +5,14 @@ export default Controller.extend({
   dataService: service('data'),
 
   actions: {
-    async deleteSpeaker(speaker) {
-      await this.get('dataService').deleteSpeaker(speaker);
-      this.transitionToRoute('speaker.index');
+    async deleteSpeaker() {
+      try {
+        await this.model.destroyRecord();
+        this.transitionToRoute('speaker.index');
+      }
+      catch(e) {
+        this.send('error', e);
+      }
     }
   }
 });
