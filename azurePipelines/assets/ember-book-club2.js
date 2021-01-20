@@ -1026,9 +1026,13 @@ define('ember-book-club2/controllers/book/detail', ['exports'], function (export
     dataService: Ember.inject.service('data'),
 
     actions: {
-      async deleteBook(book) {
-        await this.get('dataService').deleteBook(book);
-        this.transitionToRoute('book.index');
+      async deleteBook() {
+        try {
+          await this.model.destroyRecord();
+          this.transitionToRoute('book.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -1094,9 +1098,13 @@ define('ember-book-club2/controllers/report/detail', ['exports'], function (expo
   });
   exports.default = Ember.Controller.extend({
     actions: {
-      async deleteReport(report) {
-        await this.get('dataService').deletereport(report);
-        this.transitionToRoute('report.index');
+      async deleteReport() {
+        try {
+          await this.model.destroyRecord();
+          this.transitionToRoute('report.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -1168,9 +1176,13 @@ define('ember-book-club2/controllers/speaker/detail', ['exports'], function (exp
     dataService: Ember.inject.service('data'),
 
     actions: {
-      async deleteSpeaker(speaker) {
-        await this.get('dataService').deleteSpeaker(speaker);
-        this.transitionToRoute('speaker.index');
+      async deleteSpeaker() {
+        try {
+          await this.model.destroyRecord();
+          this.transitionToRoute('speaker.index');
+        } catch (e) {
+          this.send('error', e);
+        }
       }
     }
   });
@@ -2565,6 +2577,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+ec67b164"});
+  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+b6281bff"});
 }
 //# sourceMappingURL=ember-book-club2.map
