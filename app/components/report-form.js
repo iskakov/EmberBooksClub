@@ -17,6 +17,14 @@ export default Component.extend({
         presentationUrl: this.get('presentationUrl'),
         videoUrl: this.get('videoUrl')
       })
+    },
+
+    searchSpeaker(query) {
+      return this.get('store').query('speaker', { q: query })
+    },
+
+    searchBook(query) {
+      return this.get('store').query('book', { q: query })
     }
   },
   async didReceiveAttrs(){

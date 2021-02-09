@@ -6,9 +6,9 @@ export default Component.extend({
       e.preventDefault();
 
       this.onsubmit({
-        id: this.get('id'), 
-        firstName: this.get('firstName'), 
-        lastName: this.get('lastName'), 
+        id: this.get('id'),
+        firstName: this.get('firstName'),
+        lastName: this.get('lastName')
       })
     }
   },

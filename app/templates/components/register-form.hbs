@@ -1,0 +1,37 @@
+<form onsubmit={{action "registerSpeaker"}}>
+   <div class="form-group">
+    <label>Имя:</label>
+    {{input value=firstName class="form-control" placeholder=""}}
+
+     {{#each errors.email as |error|}}
+      <span class="error-message">{{error.message}}</span>
+    {{/each}}
+  </div>
+  <div class="form-group">
+    <label>Фамилия:</label>
+    {{input value=lastName class="form-control" placeholder=""}}
+
+     {{#each errors.email as |error|}}
+      <span class="error-message">{{error.message}}</span>
+    {{/each}}
+  </div>
+  <div class="form-group">
+    <label>Email:</label>
+    {{input value=email class="form-control" placeholder=""}}
+
+     {{#each errors.email as |error|}}
+      <span class="error-message">{{error.message}}</span>
+    {{/each}}
+  </div>
+  <div class="form-group">
+    <label>Пароль:</label>
+    {{input value=password class="form-control" placeholder=""}}
+
+     {{#each errors.email as |error|}}
+      <span class="error-message">{{error.message}}</span>
+    {{/each}}
+  </div>
+  <button class="btn btn-primary my-1 btn-block active" type="submit">
+    Регистрация
+  </button>
+</form>

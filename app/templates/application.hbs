@@ -15,6 +15,12 @@
         {{#link-to "report" class="nav-link"}}
           Список докладов
         {{/link-to}}
+          {{#if session.isAuthenticated}}
+            <a href="#" onclick={{action "logout"}} class="nav-link">Logout</a>
+          {{else}}
+            {{#link-to "register" class="nav-link"}}Register{{/link-to}}
+            {{#link-to "login" class="nav-link"}}Login{{/link-to}}
+          {{/if}}
       </nav>
     </div>
   </header>
