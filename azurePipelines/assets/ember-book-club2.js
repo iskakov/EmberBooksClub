@@ -3179,7 +3179,7 @@ define('ember-book-club2/routes/application', ['exports', 'ember-simple-auth/mix
 
     sessionInvalidated() {
       this.get('currentUser').resetCurrentUser();
-      window.location.replace('/login');
+      this.transitionToRoute('login');
     },
 
     loadUser() {
@@ -4150,6 +4150,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+b0253638"});
+  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+adaa2b6a"});
 }
 //# sourceMappingURL=ember-book-club2.map
