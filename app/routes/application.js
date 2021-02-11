@@ -20,7 +20,7 @@ export default Route.extend(ApplicationRouteMixin, {
 
   sessionInvalidated() {
     this.get('currentUser').resetCurrentUser();
-    this.transitionToRoute('login');
+    this.transitionTo('login');
   },
 
   loadUser() {
