@@ -32,9 +32,7 @@ Router.map(function() {
   this.route('author', { path: '/authors'}, function() {
     this.route('create');
     this.route('edit', { path: '/:id/edit'});
-    this.route('detail', { path: '/:id'},  function() {
-      this.route('new-book');
-    });
+    this.route('detail', { path: '/:id'});
   });
 });
 

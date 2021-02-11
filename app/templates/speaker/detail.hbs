@@ -22,9 +22,12 @@
   </div>
 </form>
 
-<div class="row">
-  {{#link-to "speaker.edit" model.id class="col btn btn-primary mx-3  active"}}
-    Изменить
-  {{/link-to}}
-  <button class="col btn btn-primary mr-3  active" onclick={{action "deleteSpeaker" model}}>Удалить</button>
-</div>
+
+{{#if (await (can "edit speaker" model)) }}
+  <div class="row">
+    {{#link-to "speaker.edit" model.id class="col btn btn-primary mx-3  active"}}
+      Изменить
+    {{/link-to}}
+    <button class="col btn btn-primary mr-3  active" onclick={{action "deleteSpeaker" model}}>Удалить</button>
+  </div>
+{{/if}}

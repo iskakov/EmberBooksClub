@@ -1,18 +1,28 @@
 {{#if isNew}}
   <h3>Новая книга</h3>
+  {{#if isAuthor}}
+    <h3>Автора: {{author.lastName}} {{author.firstName}}</h3>
+  {{/if}}
 {{else}}
   <h3>Название книги: {{book.title}}</h3>
 {{/if}}
+
 
 <form onsubmit={{action "submitForm"}}>
   <div class="form-group">
     <label>Название книги:</label>
     {{input value=title class="form-control" placeholder="Название книги"}}
   </div>
-  <div class="form-group">
-    <label>Автор:</label>
-    {{input value=author class="form-control" placeholder="Автор"}}
+
+  {{#unless isAuthor}}
+    <div class="form-group">
+    <label>Выберите автора:</label>
+    {{#power-select searchEnabled=true onchange=(action (mut author)) selected=author search=(action "searchAuthor") as |author|}}
+        {{author.lastName}} {{author.firstName}}
+    {{/power-select}}
   </div>
+  {{/unless}}
+
   <div class="form-group">
     <label>Кол-во страниц:</label>
     {{input value=countPages class="form-control" placeholder="Кол-во страниц"}}

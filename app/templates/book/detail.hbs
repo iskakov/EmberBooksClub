@@ -4,7 +4,7 @@
     <label>Название книги: {{model.title}}</label>
   </div>
   <div class="form-group">
-    <label>Автор: {{model.author}}</label>
+    <label>Автор: {{model.author.lastName}} {{model.author.firstName}}</label>
   </div>
   <div class="form-group">
     <label>Количество страниц: {{model.countPages}}</label>
@@ -14,6 +14,11 @@
   </div>
   <div class="form-group">
     <label>Список докладов:</label>
+    {{#if (await (can "create report" model)) }}
+        {{#link-to "book.detail.new-report" model.id class="btn btn-primary mx-3  active"}}
+          Добавить доклад
+        {{/link-to}}
+      {{/if}}
     {{#each model.reports as |report|}}
       <div>
         <div>
@@ -28,11 +33,14 @@
       </div>
     {{/each}}
   </div>
+  {{outlet}}
 </form>
 
-<div class="row">
-  {{#link-to "book.edit" model.id class="col btn btn-primary mx-3  active"}}
-    Изменить
-  {{/link-to}}
-  <button class="col btn btn-primary mr-3  active" onclick={{action "deleteBook" model}}>Удалить</button>
-</div>
+{{#if (await (can "edit book" model)) }}
+  <div class="row">
+    {{#link-to "book.edit" model.id class="col btn btn-primary mx-3  active"}}
+      Изменить
+    {{/link-to}}
+    <button class="col btn btn-primary mr-3  active" onclick={{action "deleteBook" model}}>Удалить</button>
+  </div>
+{{/if}}

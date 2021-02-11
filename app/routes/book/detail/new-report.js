@@ -1,16 +1,18 @@
 import Route from '@ember/routing/route';
 
-export default Route.extend({
+import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/unauthenticated-route-mixin';
+export default Route.extend(AuthenticatedRouteMixin, {
   model() {
-    let book = this.modelFor('book.detail');
+    const book = this.modelFor('book.detail');
 
     return {
       book,
       report: {
-        user: '',
-        body: '',
+        title: '',
+        isbn: '',
+        publishDate: '',
         book
       }
-    };
+    }
   }
 });

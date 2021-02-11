@@ -21,6 +21,7 @@ export default DS.JSONAPIAdapter.extend({
 
   buildURL(modelName, id, snapshot, requestType, query) {
     let url = this._super(...arguments);
+
     if (modelName === 'speaker' && requestType === 'findRecord' && id) {
       url += '?_embed=reports';
     }
@@ -29,6 +30,9 @@ export default DS.JSONAPIAdapter.extend({
       url += '?_embed=reports';
     }
 
+    if (modelName === 'author' && requestType === 'findRecord' && id) {
+      url += '?_embed=books';
+    }
     return url;
   }
 });

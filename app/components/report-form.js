@@ -2,7 +2,8 @@ import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 
 export default Component.extend({
-  store: service('store'),
+  currentUser: service(),
+  moment: service(),
   actions: {
     submitForm(e) {
       e.preventDefault();
@@ -29,14 +30,13 @@ export default Component.extend({
   },
   async didReceiveAttrs(){
     this._super(...arguments);
-    let books =  await this.get('store').findAll('book');
-    let speakers =  await this.get('store').findAll('speaker');
+    let currBook = this.get('book') ? this.get('book') : this.get('report.book');
+    let currDate = this.get('report') ? this.get('report.date') : this.get('moment').moment(new Date()).format('YYYY-MM-DD');
+    let currSpeaker = this.get('report') ? this.get('report.speaker') : this.get('currentUser.user');
     this.setProperties({
-      book: this.get('report.book'),
-      books: books,
-      speakers: speakers,
-      speaker:  this.get('report.speaker'),
-      date: this.get('report.date'),
+      book: currBook,
+      speaker:  currSpeaker,
+      date: currDate,
       shortReview: this.get('report.shortReview'),
       raiting: this.get('report.raiting'),
       presentationUrl: this.get('report.presentationUrl'),

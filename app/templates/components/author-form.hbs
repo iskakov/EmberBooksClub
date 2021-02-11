@@ -1,0 +1,30 @@
+{{#if isNew}}
+  <h3>Новая автор</h3>
+{{else}}
+  <h3>Автор: {{author.lastName}} {{author.firstName}}</h3>
+{{/if}}
+
+<form onsubmit={{action "submitForm"}}>
+  <div class="form-group">
+    <label>Имя:</label>
+    {{input value=firstName class="form-control" placeholder="Имя"}}
+  </div>
+  <div class="form-group">
+    <label>Фамилия:</label>
+    {{input value=lastName class="form-control" placeholder="Фамилия"}}
+  </div>
+
+  <div class="form-group">
+    <label>Годы жизни/смерти:</label>
+    {{input value=yearsOfLife class="form-control" placeholder="0-..."}}
+  </div>
+
+  <button class="btn btn-primary my-1 btn-block active" type="submit">
+    {{#if isNew}}
+      Добавить
+    {{else}}
+      Сохранить
+    {{/if}}
+  </button>
+</form>
+

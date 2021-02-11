@@ -2,9 +2,11 @@
   <div class="col-3 mr-3 h-100 p-3 my-3 border text-black">
     <h4>Список книг:</h4>
       {{input value=search placeholder="Поиск" class="form-control my-2"}}
-     {{#link-to "book.create" class="btn btn-primary my-2 btn-block"}}
-      Добавить книгу
-    {{/link-to}}
+      {{#if (await (can "create book" model)) }}
+        {{#link-to "book.create" class="btn btn-primary my-2 btn-block"}}
+          Добавить книгу
+        {{/link-to}}
+      {{/if}}
     <div></div>
     <ul class="list-group overflow-auto main-row">
       {{#each model as |book|}}

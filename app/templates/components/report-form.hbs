@@ -1,5 +1,8 @@
 {{#if isNew}}
   <h3>Новый доклад</h3>
+   {{#if isBook}}
+    <h3>Книга: {{book.title}}. Автора: {{book.author.lastName}} {{book.author.firstName}}</h3>
+  {{/if}}
 {{else}}
   <h3>Книга о которой идет речь - {{book.title}} {{book.author}}</h3>
 {{/if}}
@@ -26,20 +29,21 @@
     {{input value=videoUrl class="form-control" placeholder="Ссылка на видео"}}
   </div>
 
-  <div class="form-group">
-    <label>Выберите книгу:</label>
-     {{#power-select searchEnabled=true onchange=(action (mut book)) selected=book search=(action "searchBook") as |book|}}
-        {{book.title}}
-    {{/power-select}}
-  </div>
+  {{#if isBook}}
+    <div class="form-group">
+      <label>Выберите книгу:</label>
+      {{#power-select searchEnabled=true onchange=(action (mut book)) selected=book search=(action "searchBook") as |book|}}
+          {{book.title}}
+      {{/power-select}}
+    </div>
 
-   <div class="form-group">
-    <label>Выберите докладчика:</label>
-    {{#power-select searchEnabled=true onchange=(action (mut speaker)) selected=speaker search=(action "searchSpeaker") as |speaker|}}
-        {{speaker.lastName}} {{speaker.firstName}}
-    {{/power-select}}
-  </div>
-
+    <div class="form-group">
+      <label>Выберите докладчика:</label>
+      {{#power-select searchEnabled=true onchange=(action (mut speaker)) selected=speaker search=(action "searchSpeaker") as |speaker|}}
+          {{speaker.lastName}} {{speaker.firstName}}
+      {{/power-select}}
+    </div>
+  {{/if}}
   <button class="btn btn-primary my-1 btn-block active" type="submit">
     {{#if isNew}}
       Добавить
