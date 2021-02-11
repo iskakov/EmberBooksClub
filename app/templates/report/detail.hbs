@@ -1,7 +1,7 @@
 <h3>Детальная информация:</h3>
 <form>
   <div class="form-group">
-    <label>Название книги и автор: {{model.book.title}} {{model.book.author}}</label>
+    <label>Название книги и автор: {{model.book.title}} {{model.book.author.lastName}} {{model.book.author.firstName}}</label>
   </div>
 
   <div class="form-group">
@@ -30,9 +30,11 @@
 
 </form>
 
-<div class="row">
-  {{#link-to "report.edit" model.id class="col btn btn-primary mx-3  active"}}
-    Изменить
-  {{/link-to}}
-  <button class="col btn btn-primary mr-3  active" onclick={{action "deleteReport" model}}>Удалить</button>
-</div>
+{{#if (await (can "edit report" model)) }}
+  <div class="row">
+    {{#link-to "report.edit" model.id class="col btn btn-primary mx-3  active"}}
+      Изменить
+    {{/link-to}}
+    <button class="col btn btn-primary mr-3  active" onclick={{action "deleteReport" model}}>Удалить</button>
+  </div>
+{{/if}}

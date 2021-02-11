@@ -16,7 +16,9 @@ Router.map(function() {
     this.route('edit', { path: '/:id/edit'});
   });
   this.route('book', { path: '/books'}, function() {
-    this.route('detail', { path: '/:id'});
+    this.route('detail', { path: '/:id'}, function() {
+      this.route('new-report');
+    });
     this.route('create');
     this.route('edit', { path: '/:id/edit'});
   });
@@ -24,6 +26,13 @@ Router.map(function() {
     this.route('create');
     this.route('detail', { path: '/:id'});
     this.route('edit', { path: '/:id/edit'});
+  });
+  this.route('login');
+  this.route('register');
+  this.route('author', { path: '/authors'}, function() {
+    this.route('create');
+    this.route('edit', { path: '/:id/edit'});
+    this.route('detail', { path: '/:id'});
   });
 });
 

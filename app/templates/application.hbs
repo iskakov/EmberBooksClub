@@ -4,18 +4,34 @@
       {{#link-to "index" class="navbar-brand"}}
          Книжный клуб
       {{/link-to}}
-      <nav class="navbar-nav">
+      <nav class="navbar-nav mr-auto">
         <a href="#" class="nav-link active">Список встреч</a>
         {{#link-to "book" class="nav-link"}}
           Список книг
         {{/link-to}}
-        {{#link-to "speaker" class="nav-link"}}
-          Список участников
+        {{#link-to "author" class="nav-link"}}
+          Список авторов
         {{/link-to}}
+        {{#if session.isAuthenticated}}
+          {{#link-to "speaker" class="nav-link"}}
+            Список участников
+          {{/link-to}}
+        {{/if}}
         {{#link-to "report" class="nav-link"}}
           Список докладов
         {{/link-to}}
+        {{#if session.isAuthenticated}}
+          <a href="#" onclick={{action "logout"}} class="nav-link">Logout</a>
+        {{else}}
+          {{#link-to "register" class="nav-link"}}Register{{/link-to}}
+          {{#link-to "login" class="nav-link"}}Login{{/link-to}}
+        {{/if}}
       </nav>
+      {{#if session.isAuthenticated}}
+        <div class="navbar-text">
+          Вы -  <strong> {{currentUser.user.lastName}} {{currentUser.user.firstName}}</strong>
+        </div>
+      {{/if}}
     </div>
   </header>
 

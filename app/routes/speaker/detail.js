@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
-export default Route.extend({
+import UnauthenticatedRouteMixin from 'ember-simple-auth/mixins/unauthenticated-route-mixin';
+export default Route.extend(UnauthenticatedRouteMixin, {
   model({ id }) {
     return this.get('store').findRecord('speaker', id);
   }

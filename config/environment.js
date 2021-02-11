@@ -17,6 +17,10 @@ module.exports = function(environment) {
         Date: false
       }
     },
+    'ember-simple-auth-token': {
+      serverTokenEndpoint: 'http://localhost:3000/token',
+      refreshAccessTokens: false
+    },
 
     APP: {
       // Here you can pass flags/options to your application instance
@@ -36,6 +40,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
     ENV.rootURL = '/EmberBooksClub/azurePipelines/';
     ENV.backendURL = 'https://jsonserver-bookclub.herokuapp.com'
+    ENV['ember-simple-auth-token'].serverTokenEndpoint = 'https://jsonserver-bookclub.herokuapp.com/token'
   }
 
   if (environment === 'test') {

@@ -1,0 +1,24 @@
+<div class="row ">
+  <div class="col-3 mr-3 h-100 p-3 my-3 border text-black">
+    <h4>Список книг:</h4>
+      {{input value=search placeholder="Поиск" class="form-control my-2"}}
+      {{#if (await (can "create author" model)) }}
+        {{#link-to "author.create" class="btn btn-primary my-2 btn-block"}}
+          Добавить автора
+        {{/link-to}}
+      {{/if}}
+    <div></div>
+    <ul class="list-group overflow-auto main-row">
+      {{#each model as |author|}}
+        {{#link-to "author.detail" author.id class="list-group-item my-1 border"}}
+          {{author.lastName}} {{author.firstName}}
+        {{/link-to}}
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="col mh-100 p-3 my-3 border text-black">
+    {{outlet}}
+  </div>
+
+</div>
