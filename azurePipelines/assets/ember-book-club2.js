@@ -3165,10 +3165,10 @@ define('ember-book-club2/routes/application', ['exports', 'ember-simple-auth/mix
     session: Ember.inject.service(),
     currentUser: Ember.inject.service(),
 
-    beforeModel() {
+    async beforeModel() {
       this._super(...arguments);
 
-      this.loadUser();
+      await this.loadUser();
     },
 
     sessionAuthenticated() {
@@ -3182,9 +3182,9 @@ define('ember-book-club2/routes/application', ['exports', 'ember-simple-auth/mix
       this.transitionTo('login');
     },
 
-    loadUser() {
+    async loadUser() {
       if (this.get('session.isAuthenticated')) {
-        this.get('currentUser').load();
+        await this.get('currentUser').load();
       }
     },
 
@@ -3224,13 +3224,13 @@ define('ember-book-club2/routes/author', ['exports'], function (exports) {
     }
   });
 });
-define('ember-book-club2/routes/author/create', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/author/create', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {});
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {});
 });
 define('ember-book-club2/routes/author/detail', ['exports'], function (exports) {
   'use strict';
@@ -3245,13 +3245,13 @@ define('ember-book-club2/routes/author/detail', ['exports'], function (exports) 
     }
   });
 });
-define('ember-book-club2/routes/author/detail/new-book', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/author/detail/new-book', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
     model() {
       const author = this.modelFor('author.detail');
 
@@ -3267,13 +3267,13 @@ define('ember-book-club2/routes/author/detail/new-book', ['exports', 'ember-simp
     }
   });
 });
-define('ember-book-club2/routes/author/edit', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/author/edit', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
 
     model({ id }) {
       return this.get('store').findRecord('author', id);
@@ -3305,13 +3305,13 @@ define('ember-book-club2/routes/book', ['exports'], function (exports) {
     }
   });
 });
-define('ember-book-club2/routes/book/create', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/book/create', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {});
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {});
 });
 define('ember-book-club2/routes/book/detail', ['exports'], function (exports) {
   'use strict';
@@ -3326,13 +3326,13 @@ define('ember-book-club2/routes/book/detail', ['exports'], function (exports) {
     }
   });
 });
-define('ember-book-club2/routes/book/detail/new-report', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/book/detail/new-report', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
     model() {
       const book = this.modelFor('book.detail');
 
@@ -3348,13 +3348,13 @@ define('ember-book-club2/routes/book/detail/new-report', ['exports', 'ember-simp
     }
   });
 });
-define('ember-book-club2/routes/book/edit', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/book/edit', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
 
     model({ id }) {
       return this.get('store').findRecord('book', id);
@@ -3446,13 +3446,13 @@ define('ember-book-club2/routes/report', ['exports'], function (exports) {
     }
   });
 });
-define('ember-book-club2/routes/report/create', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/report/create', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {});
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {});
 });
 define('ember-book-club2/routes/report/detail', ['exports'], function (exports) {
   'use strict';
@@ -3467,13 +3467,13 @@ define('ember-book-club2/routes/report/detail', ['exports'], function (exports) 
     }
   });
 });
-define('ember-book-club2/routes/report/edit', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/report/edit', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
     model({ id }) {
       return this.get('store').findRecord('report', id);
     }
@@ -3504,33 +3504,33 @@ define('ember-book-club2/routes/speaker', ['exports', 'ember-simple-auth/mixins/
     }
   });
 });
-define('ember-book-club2/routes/speaker/create', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/speaker/create', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {});
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {});
 });
-define('ember-book-club2/routes/speaker/detail', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/speaker/detail', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
     model({ id }) {
       return this.get('store').findRecord('speaker', id);
     }
   });
 });
-define('ember-book-club2/routes/speaker/edit', ['exports', 'ember-simple-auth/mixins/unauthenticated-route-mixin'], function (exports, _unauthenticatedRouteMixin) {
+define('ember-book-club2/routes/speaker/edit', ['exports', 'ember-simple-auth/mixins/authenticated-route-mixin'], function (exports, _authenticatedRouteMixin) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.Route.extend(_unauthenticatedRouteMixin.default, {
+  exports.default = Ember.Route.extend(_authenticatedRouteMixin.default, {
     model({ id }) {
       return this.get('store').findRecord('speaker', id);
     }
@@ -4150,6 +4150,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+33369fd1"});
+  require("ember-book-club2/app")["default"].create({"name":"ember-book-club2","version":"0.0.0+a5c0486e"});
 }
 //# sourceMappingURL=ember-book-club2.map
