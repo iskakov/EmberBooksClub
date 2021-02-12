@@ -6,10 +6,10 @@ export default Route.extend(ApplicationRouteMixin, {
   session: service(),
   currentUser: service(),
 
-  beforeModel() {
+  async beforeModel() {
     this._super(...arguments);
 
-    this.loadUser();
+    await this.loadUser();
   },
 
   sessionAuthenticated() {
@@ -23,9 +23,9 @@ export default Route.extend(ApplicationRouteMixin, {
     this.transitionTo('login');
   },
 
-  loadUser() {
+  async loadUser() {
     if (this.get('session.isAuthenticated')) {
-      this.get('currentUser').load();
+      await this.get('currentUser').load();
     }
   },
 
